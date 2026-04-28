@@ -1,0 +1,30 @@
+# Local / Editor
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.ipynb_checkpoints/
+
+# Build
+dist/
+build/
+
+# Outputs
+out/
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+secrets.json
+
+# OS
+Thumbs.db

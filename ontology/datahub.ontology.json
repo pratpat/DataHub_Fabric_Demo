@@ -1,0 +1,36 @@
+{
+  "name": "DataHubGoldOntology",
+  "description": "Governed semantic model over the DataHub gold Warehouse for Green Meadows.",
+  "entities": [
+    { "name": "Fund",            "table": "dim_fund",            "key": "fund_key" },
+    { "name": "Account",         "table": "dim_account",         "key": "account_key" },
+    { "name": "Security",        "table": "dim_security",        "key": "security_key" },
+    { "name": "Date",            "table": "dim_date",            "key": "date_key" },
+    { "name": "Position",        "table": "fact_positions",      "key": ["fund_key","account_key","security_key","date_key"] },
+    { "name": "Transaction",     "table": "fact_transactions",   "key": "txn_id" },
+    { "name": "Cash",            "table": "fact_cash",           "key": ["fund_key","account_key","currency","date_key"] },
+    { "name": "NAV",             "table": "fact_nav",            "key": ["fund_key","share_class","date_key"] },
+    { "name": "PnL",             "table": "fact_pnl",            "key": ["fund_key","account_key","security_key","date_key"] }
+  ],
+  "relationships": [
+    { "from": "Position",    "to": "Fund",      "from_key": "fund_key",     "to_key": "fund_key" },
+    { "from": "Position",    "to": "Account",   "from_key": "account_key",  "to_key": "account_key" },
+    { "from": "Position",    "to": "Security",  "from_key": "security_key", "to_key": "security_key" },
+    { "from": "Position",    "to": "Date",      "from_key": "date_key",     "to_key": "date_key" },
+    { "from": "Transaction", "to": "Fund",      "from_key": "fund_key",     "to_key": "fund_key" },
+    { "from": "Transaction", "to": "Security",  "from_key": "security_key", "to_key": "security_key" },
+    { "from": "Cash",        "to": "Fund",      "from_key": "fund_key",     "to_key": "fund_key" },
+    { "from": "NAV",         "to": "Fund",      "from_key": "fund_key",     "to_key": "fund_key" },
+    { "from": "PnL",         "to": "Fund",      "from_key": "fund_key",     "to_key": "fund_key" },
+    { "from": "PnL",         "to": "Security",  "from_key": "security_key", "to_key": "security_key" }
+  ],
+  "measures": [
+    { "name": "Market Value (USD)", "expression": "SUMX(Position, Position.qty * RELATED(MarketPrice[close]) * RELATED(FxRate[rate_to_usd]))" },
+    { "name": "Gross Exposure",     "expression": "SUMX(Position, ABS([Market Value (USD)]))" },
+    { "name": "Net Exposure",       "expression": "SUMX(Position, [Market Value (USD)])" },
+    { "name": "Daily P&L",          "expression": "SUM(PnL.amount_usd)" },
+    { "name": "MTD P&L",            "expression": "CALCULATE([Daily P&L], DATESMTD(Date[date]))" },
+    { "name": "YTD P&L",            "expression": "CALCULATE([Daily P&L], DATESYTD(Date[date]))" },
+    { "name": "NAV (USD)",          "expression": "LASTNONBLANK(NAV.nav_usd, 1)" }
+  ]
+}
