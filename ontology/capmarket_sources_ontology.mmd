@@ -1,0 +1,141 @@
+erDiagram
+    BB_SecurityMaster ||--o{ MSFS_Position      : "identifies (CUSIP/ISIN/SEDOL/Ticker)"
+    BB_SecurityMaster ||--o{ FlexTrade_Position : "identifies"
+    BB_SecurityMaster ||--o{ JPMC_Position      : "identifies"
+    BB_SecurityMaster ||--o{ Axioma_Risk        : "identifies"
+
+    MSFS_Position      ||--o{ Axioma_Risk : "risk-scored (same security/date)"
+    FlexTrade_Position ||--o{ Axioma_Risk : "risk-scored"
+    JPMC_Position      ||--o{ Axioma_Risk : "risk-scored"
+
+    BB_SecurityMaster {
+        string Date
+        string Ticker
+        string BloombergTicker
+        string CUSIP
+        string ISIN
+        string SEDOL
+        string FIGIID
+        string ID_BB_GLOBAL
+        string AssetType
+        string AssetTypeBBG
+        string LocalCurrency
+        string Direction
+        string EarningsDate
+        string AssetDescription
+        string PortfolioManager
+        string PositionGroup
+        double QuantityEOD
+        double MarketPriceBaseEOD
+        double MarketValueLocalEOD
+        double MarketValueBaseEOD
+        double UnderlyingPrice
+    }
+
+    MSFS_Position {
+        string Date
+        string PortfolioManager
+        string PositionGroup
+        string Country
+        string AssetDescription
+        string Ticker
+        string BloombergTicker
+        string AssetType
+        string LocalCurrency
+        string Direction
+        string PBSource
+        string CUSIP
+        string ISIN
+        string SEDOL
+        string AssetCategory
+        string AssetSubCategory
+        double QuantityEOD
+        double MarketPriceBaseEOD
+        double MarketValueLocalEOD
+        double MarketValueBaseEOD
+        double DailyPNL
+        double MTDPNL
+        double YTDPNL
+        double AUM
+        double UnderlyingPrice
+        double UnitCost
+    }
+
+    FlexTrade_Position {
+        string Date
+        string PortfolioManager
+        string PositionGroup
+        string Country
+        string AssetDescription
+        string Ticker
+        string BloombergTicker
+        string CUSIP
+        string ISIN
+        string SEDOL
+        string AssetType
+        string LocalCurrency
+        string Direction
+        double QuantityEOD
+        double MarketPriceBaseEOD
+        double MarketValueLocalEOD
+        double MarketValueBaseEOD
+        double Delta
+        double DeltaAdjustedNetExposure
+        double UnderlyingPrice
+        double TickUnit
+        double CS01
+        double RiskFactor
+        double Vega
+        double VegaAdjustedExposure
+    }
+
+    JPMC_Position {
+        string Date
+        string PortfolioManager
+        string PositionGroup
+        string AssetDescription
+        string Ticker
+        string BloombergTicker
+        string CUSIP
+        string ISIN
+        string SEDOL
+        string AssetType
+        string LocalCurrency
+        string Direction
+        double FinancingRate
+        double QuantityEOD
+        double MarketPriceBaseEOD
+        double MarketValueLocalEOD
+        double MarketValueBaseEOD
+        double UnderlyingPrice
+    }
+
+    Axioma_Risk {
+        string Date
+        string PortfolioManager
+        string PositionGroup
+        string AssetDescription
+        string Ticker
+        string BloombergTicker
+        string CUSIP
+        string ISIN
+        string SEDOL
+        string AssetType
+        string LocalCurrency
+        string Direction
+        double QuantityEOD
+        double MarketPriceBaseEOD
+        double MarketValueLocalEOD
+        double MarketValueBaseEOD
+        double UnderlyingPrice
+        double VaR90
+        double VaR95
+        double VaR99
+        double Pct_VaR95
+        double Pct_VaR95_AUM
+        double Pct_VaR90
+        double Pct_VaR90_AUM
+        double Pct_VaR99
+        double Pct_VaR99_AUM
+        string VaRPeriod
+    }
