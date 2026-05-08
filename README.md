@@ -80,6 +80,103 @@ flowchart LR
 
 ---
 
+## Source Ontology
+
+Derived from the actual Lakehouse DDL ([`fabric/ddl_export.sql`](fabric/ddl_export.sql)). `BB_SecurityMaster` is the canonical reference; the position sources (MSFS / FlexTrade / JPMC) are joined with `Axioma_Risk` on `Date` + security identifiers.
+
+```mermaid
+erDiagram
+    BB_SecurityMaster ||--o{ MSFS_Position      : "identifies (CUSIP/ISIN/SEDOL/Ticker)"
+    BB_SecurityMaster ||--o{ FlexTrade_Position : "identifies"
+    BB_SecurityMaster ||--o{ JPMC_Position      : "identifies"
+    BB_SecurityMaster ||--o{ Axioma_Risk        : "identifies"
+
+    MSFS_Position      ||--o{ Axioma_Risk : "risk-scored (same security/date)"
+    FlexTrade_Position ||--o{ Axioma_Risk : "risk-scored"
+    JPMC_Position      ||--o{ Axioma_Risk : "risk-scored"
+
+    BB_SecurityMaster {
+        string Ticker
+        string BloombergTicker
+        string CUSIP
+        string ISIN
+        string SEDOL
+        string FIGIID
+        string ID_BB_GLOBAL
+        string AssetType
+        string AssetTypeBBG
+        string EarningsDate
+    }
+
+    MSFS_Position {
+        string Date
+        string Ticker
+        string CUSIP
+        string ISIN
+        string SEDOL
+        string PBSource
+        string AssetCategory
+        string AssetSubCategory
+        double QuantityEOD
+        double MarketValueBaseEOD
+        double DailyPNL
+        double MTDPNL
+        double YTDPNL
+        double AUM
+        double UnitCost
+    }
+
+    FlexTrade_Position {
+        string Date
+        string Ticker
+        string CUSIP
+        string ISIN
+        string SEDOL
+        double QuantityEOD
+        double MarketValueBaseEOD
+        double Delta
+        double DeltaAdjustedNetExposure
+        double TickUnit
+        double CS01
+        double RiskFactor
+        double Vega
+        double VegaAdjustedExposure
+    }
+
+    JPMC_Position {
+        string Date
+        string Ticker
+        string CUSIP
+        string ISIN
+        string SEDOL
+        double FinancingRate
+        double QuantityEOD
+        double MarketValueBaseEOD
+    }
+
+    Axioma_Risk {
+        string Date
+        string Ticker
+        string CUSIP
+        string ISIN
+        string SEDOL
+        double VaR90
+        double VaR95
+        double VaR99
+        double Pct_VaR95
+        double Pct_VaR95_AUM
+        double Pct_VaR90
+        double Pct_VaR90_AUM
+        double Pct_VaR99
+        double Pct_VaR99_AUM
+        string VaRPeriod
+    }
+```
+
+> Full attribute-level diagram and notes: [`ontology/capmarket_sources_ontology.md`](ontology/capmarket_sources_ontology.md)
+
+---
+
 ## Repo Structure
 
 ```
