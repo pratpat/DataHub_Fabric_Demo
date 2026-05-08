@@ -1,0 +1,40 @@
+table BB_SecurityMaster
+	lineageTag: bb-securitymaster
+	description: "Bloomberg Security Master — canonical reference data (FIGI, CUSIP, ISIN, SEDOL, ticker, asset classification)."
+
+	column Date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+	column PortfolioManager dataType: string
+	column PositionGroup    dataType: string
+	column AssetDescription dataType: string
+	column Ticker           dataType: string
+	column BloombergTicker  dataType: string
+	column AssetType        dataType: string
+	column LocalCurrency    dataType: string
+	column Direction        dataType: string
+	column CUSIP            dataType: string
+	column ISIN             dataType: string
+	column SEDOL            dataType: string
+	column EarningsDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+	column AssetTypeBBG     dataType: string
+	column FIGIID           dataType: string
+	column ID_BB_GLOBAL     dataType: string
+
+	column QuantityEOD          dataType: double
+	column MarketPriceBaseEOD   dataType: double
+	column MarketValueLocalEOD  dataType: double
+	column MarketValueBaseEOD   dataType: double
+	column UnderlyingPrice      dataType: double
+
+	partition BB_SecurityMaster = m
+		mode: directLake
+		source = ```
+			let
+			    Source = Lakehouse.Contents([]),
+			    LH = Source{[Name="CapMarket_LH"]}[Data],
+			    Tbl = LH{[Schema="dbo",Item="BB_SecurityMaster"]}[Data]
+			in Tbl
+		```

@@ -1,0 +1,48 @@
+relationship MSFS_to_Security
+	fromColumn: MSFS_Position.CUSIP
+	toColumn: BB_SecurityMaster.CUSIP
+	crossFilteringBehavior: bothDirections
+
+relationship FlexTrade_to_Security
+	fromColumn: FlexTrade_Position.CUSIP
+	toColumn: BB_SecurityMaster.CUSIP
+	crossFilteringBehavior: bothDirections
+
+relationship JPMC_to_Security
+	fromColumn: JPMC_Position.CUSIP
+	toColumn: BB_SecurityMaster.CUSIP
+	crossFilteringBehavior: bothDirections
+
+relationship Axioma_to_Security
+	fromColumn: Axioma_Risk.CUSIP
+	toColumn: BB_SecurityMaster.CUSIP
+	crossFilteringBehavior: bothDirections
+
+relationship DataHub_to_Security
+	fromColumn: DataHub_Position.CUSIP
+	toColumn: BB_SecurityMaster.CUSIP
+	crossFilteringBehavior: bothDirections
+
+relationship Security_to_Date
+	fromColumn: BB_SecurityMaster.Date
+	toColumn: DimDate.Date
+
+relationship MSFS_to_Date
+	fromColumn: MSFS_Position.Date
+	toColumn: DimDate.Date
+
+relationship FlexTrade_to_Date
+	fromColumn: FlexTrade_Position.Date
+	toColumn: DimDate.Date
+
+relationship JPMC_to_Date
+	fromColumn: JPMC_Position.Date
+	toColumn: DimDate.Date
+
+relationship Axioma_to_Date
+	fromColumn: Axioma_Risk.Date
+	toColumn: DimDate.Date
+
+relationship DataHub_to_Date
+	fromColumn: DataHub_Position.Date
+	toColumn: DimDate.Date

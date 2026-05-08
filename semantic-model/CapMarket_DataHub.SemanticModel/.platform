@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "CapMarket_DataHub",
+    "description": "Semantic model over the CapMarket DataHub Lakehouse (BB_SecurityMaster + MSFS/FlexTrade/JPMC positions + Axioma risk + DataHub_Position golden table)."
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "capmarket-datahub-semantic-model"
+  }
+}

@@ -1,0 +1,29 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["BB_SecurityMaster","MSFS_Position","FlexTrade_Position","JPMC_Position","Axioma_Risk","DataHub_Position","DimDate"]
+
+ref table BB_SecurityMaster
+ref table MSFS_Position
+ref table FlexTrade_Position
+ref table JPMC_Position
+ref table Axioma_Risk
+ref table DataHub_Position
+ref table DimDate
+
+ref relationship MSFS_to_Security
+ref relationship FlexTrade_to_Security
+ref relationship JPMC_to_Security
+ref relationship Axioma_to_Security
+ref relationship DataHub_to_Security
+ref relationship MSFS_to_Date
+ref relationship FlexTrade_to_Date
+ref relationship JPMC_to_Date
+ref relationship Axioma_to_Date
+ref relationship DataHub_to_Date
+ref relationship Security_to_Date

@@ -1,0 +1,57 @@
+table Axioma_Risk
+	lineageTag: axioma-risk
+	description: "Axioma risk analytics — VaR (90/95/99) and percentage-of-AUM contributions."
+
+	column Date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+	column PortfolioManager dataType: string
+	column PositionGroup    dataType: string
+	column AssetDescription dataType: string
+	column Ticker           dataType: string
+	column BloombergTicker  dataType: string
+	column AssetType        dataType: string
+	column LocalCurrency    dataType: string
+	column Direction        dataType: string
+	column CUSIP            dataType: string
+	column ISIN             dataType: string
+	column SEDOL            dataType: string
+	column VaRPeriod        dataType: string
+
+	column QuantityEOD          dataType: double
+	column MarketPriceBaseEOD   dataType: double
+	column MarketValueLocalEOD  dataType: double
+	column MarketValueBaseEOD   dataType: double
+	column UnderlyingPrice      dataType: double
+	column VaR90                dataType: double
+	column VaR95                dataType: double
+	column VaR99                dataType: double
+	column Pct_VaR95            dataType: double
+		formatString: 0.00%
+	column Pct_VaR95_AUM        dataType: double
+		formatString: 0.00%
+	column Pct_VaR90            dataType: double
+		formatString: 0.00%
+	column Pct_VaR90_AUM        dataType: double
+		formatString: 0.00%
+	column Pct_VaR99            dataType: double
+		formatString: 0.00%
+	column Pct_VaR99_AUM        dataType: double
+		formatString: 0.00%
+
+	measure 'Total VaR95' = SUM(Axioma_Risk[VaR95])
+		formatString: "#,##0.00"
+	measure 'Total VaR99' = SUM(Axioma_Risk[VaR99])
+		formatString: "#,##0.00"
+	measure 'Avg %VaR95 of AUM' = AVERAGE(Axioma_Risk[Pct_VaR95_AUM])
+		formatString: 0.00%
+
+	partition Axioma_Risk = m
+		mode: directLake
+		source = ```
+			let
+			    Source = Lakehouse.Contents([]),
+			    LH = Source{[Name="CapMarket_LH"]}[Data],
+			    Tbl = LH{[Schema="dbo",Item="Axioma_Risk"]}[Data]
+			in Tbl
+		```

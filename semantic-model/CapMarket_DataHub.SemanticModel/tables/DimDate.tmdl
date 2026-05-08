@@ -1,0 +1,36 @@
+table DimDate
+	lineageTag: dim-date
+	dataCategory: Time
+	description: "Calendar dimension — generated date table for time intelligence."
+
+	column Date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		isKey
+	column Year
+		dataType: int64
+		summarizeBy: none
+	column Quarter dataType: string
+	column Month
+		dataType: int64
+		summarizeBy: none
+	column MonthName dataType: string
+	column Day
+		dataType: int64
+		summarizeBy: none
+	column DayOfWeek dataType: string
+	column YearMonth dataType: string
+
+	partition DimDate = calculated
+		source = ```
+			ADDCOLUMNS(
+			    CALENDAR(DATE(2023,1,1), DATE(2027,12,31)),
+			    "Year",       YEAR([Date]),
+			    "Quarter",    "Q" & FORMAT([Date],"Q"),
+			    "Month",      MONTH([Date]),
+			    "MonthName",  FORMAT([Date],"MMMM"),
+			    "Day",        DAY([Date]),
+			    "DayOfWeek",  FORMAT([Date],"dddd"),
+			    "YearMonth",  FORMAT([Date],"yyyy-MM")
+			)
+		```

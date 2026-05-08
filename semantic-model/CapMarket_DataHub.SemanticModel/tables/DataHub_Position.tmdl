@@ -1,0 +1,120 @@
+table DataHub_Position
+	lineageTag: datahub-position
+	description: "Mastered (golden) position table — superset of all source attributes plus derived analytics (Sharpe, Volatility, VaR)."
+
+	column Date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+	column PortfolioManager dataType: string
+	column PositionGroup    dataType: string
+	column Country          dataType: string
+	column AssetDescription dataType: string
+	column Ticker           dataType: string
+	column BloombergTicker  dataType: string
+	column AssetType        dataType: string
+	column LocalCurrency    dataType: string
+	column Direction        dataType: string
+	column PBSource         dataType: string
+	column CUSIP            dataType: string
+	column ISIN             dataType: string
+	column SEDOL            dataType: string
+	column EarningsDate
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+	column AssetTypeBBG     dataType: string
+	column AssetCategory    dataType: string
+	column AssetSubCategory dataType: string
+	column VaRPeriod        dataType: string
+
+	column FinancingRate                  dataType: double
+	column QuantityEOD                    dataType: double
+	column MarketPriceBaseEOD             dataType: double
+	column MarketValueLocalEOD            dataType: double
+	column MarketValueBaseEOD             dataType: double
+	column DailyPnL                       dataType: double
+	column MTDPnL                         dataType: double
+	column YTDPnL                         dataType: double
+	column Delta                          dataType: double
+	column DeltaAdjustedNetExposure       dataType: double
+	column AUM                            dataType: double
+	column UnderlyingPrice                dataType: double
+	column TickUnit                       dataType: double
+	column UnitCost                       dataType: double
+	column YASModDur                      dataType: double
+	column CS01                           dataType: double
+	column RiskFactor                     dataType: double
+	column Vega                           dataType: double
+	column VegaAdjustedExposure           dataType: double
+	column LTDSharpeAnnualizedbyAUM       dataType: double
+	column YTDSharpeAnnualizedbyAUM       dataType: double
+	column '30DaySharpeAnnualizedbyAUM'   dataType: double
+	column '90DaySharpeAnnualizedbyAUM'   dataType: double
+	column '30DayVolatilityAnnualizedbyAUM' dataType: double
+	column '90DayVolatilityAnnualizedbyAUM' dataType: double
+	column YTDVolatilityAnnualizedbyAUM   dataType: double
+	column LTDVolatilityAnnualizedbyAUM   dataType: double
+	column VaR90                          dataType: double
+	column VaR95                          dataType: double
+	column VaR99                          dataType: double
+	column Pct_VaR95                      dataType: double
+		formatString: 0.00%
+	column Pct_VaR95_AUM                  dataType: double
+		formatString: 0.00%
+	column Pct_VaR90                      dataType: double
+		formatString: 0.00%
+	column Pct_VaR90_AUM                  dataType: double
+		formatString: 0.00%
+	column Pct_VaR99                      dataType: double
+		formatString: 0.00%
+	column Pct_VaR99_AUM                  dataType: double
+		formatString: 0.00%
+
+	// ===== Core measures =====
+	measure 'Total Market Value' = SUM(DataHub_Position[MarketValueBaseEOD])
+		formatString: "$#,##0.00"
+	measure 'Total AUM' = SUM(DataHub_Position[AUM])
+		formatString: "$#,##0.00"
+	measure 'Daily PnL' = SUM(DataHub_Position[DailyPnL])
+		formatString: "$#,##0.00"
+	measure 'MTD PnL'   = SUM(DataHub_Position[MTDPnL])
+		formatString: "$#,##0.00"
+	measure 'YTD PnL'   = SUM(DataHub_Position[YTDPnL])
+		formatString: "$#,##0.00"
+
+	// ===== Risk =====
+	measure 'Net Delta Exposure' = SUM(DataHub_Position[DeltaAdjustedNetExposure])
+		formatString: "#,##0.00"
+	measure 'Total CS01' = SUM(DataHub_Position[CS01])
+		formatString: "#,##0.00"
+	measure 'Total Vega' = SUM(DataHub_Position[Vega])
+		formatString: "#,##0.00"
+	measure 'Total VaR95' = SUM(DataHub_Position[VaR95])
+		formatString: "#,##0.00"
+	measure 'Total VaR99' = SUM(DataHub_Position[VaR99])
+		formatString: "#,##0.00"
+	measure 'VaR95 % of AUM' = DIVIDE([Total VaR95], [Total AUM])
+		formatString: 0.00%
+
+	// ===== Performance =====
+	measure 'YTD Sharpe (AUM-weighted)' =
+		DIVIDE(
+		    SUMX(DataHub_Position, DataHub_Position[YTDSharpeAnnualizedbyAUM] * DataHub_Position[AUM]),
+		    SUM(DataHub_Position[AUM])
+		)
+		formatString: "0.000"
+	measure 'YTD Volatility (AUM-weighted)' =
+		DIVIDE(
+		    SUMX(DataHub_Position, DataHub_Position[YTDVolatilityAnnualizedbyAUM] * DataHub_Position[AUM]),
+		    SUM(DataHub_Position[AUM])
+		)
+		formatString: 0.00%
+
+	partition DataHub_Position = m
+		mode: directLake
+		source = ```
+			let
+			    Source = Lakehouse.Contents([]),
+			    LH = Source{[Name="CapMarket_LH"]}[Data],
+			    Tbl = LH{[Schema="dbo",Item="DataHub_Position"]}[Data]
+			in Tbl
+		```

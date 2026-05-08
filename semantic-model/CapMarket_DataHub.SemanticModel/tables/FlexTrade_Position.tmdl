@@ -1,0 +1,51 @@
+table FlexTrade_Position
+	lineageTag: flextrade-position
+	description: "FlexTrade EMS positions — Greeks (Delta, Vega), CS01, risk exposures."
+
+	column Date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+	column PortfolioManager dataType: string
+	column PositionGroup    dataType: string
+	column Country          dataType: string
+	column AssetDescription dataType: string
+	column Ticker           dataType: string
+	column BloombergTicker  dataType: string
+	column AssetType        dataType: string
+	column LocalCurrency    dataType: string
+	column Direction        dataType: string
+	column CUSIP            dataType: string
+	column ISIN             dataType: string
+	column SEDOL            dataType: string
+
+	column QuantityEOD                dataType: double
+	column MarketPriceBaseEOD         dataType: double
+	column MarketValueLocalEOD        dataType: double
+	column MarketValueBaseEOD         dataType: double
+	column Delta                      dataType: double
+	column DeltaAdjustedNetExposure   dataType: double
+	column UnderlyingPrice            dataType: double
+	column TickUnit                   dataType: double
+	column CS01                       dataType: double
+	column RiskFactor                 dataType: double
+	column Vega                       dataType: double
+	column VegaAdjustedExposure       dataType: double
+
+	measure 'FlexTrade Total MV' = SUM(FlexTrade_Position[MarketValueBaseEOD])
+		formatString: "#,##0.00"
+	measure 'Net Delta Exposure' = SUM(FlexTrade_Position[DeltaAdjustedNetExposure])
+		formatString: "#,##0.00"
+	measure 'Total CS01' = SUM(FlexTrade_Position[CS01])
+		formatString: "#,##0.00"
+	measure 'Total Vega' = SUM(FlexTrade_Position[Vega])
+		formatString: "#,##0.00"
+
+	partition FlexTrade_Position = m
+		mode: directLake
+		source = ```
+			let
+			    Source = Lakehouse.Contents([]),
+			    LH = Source{[Name="CapMarket_LH"]}[Data],
+			    Tbl = LH{[Schema="dbo",Item="FlexTrade_Position"]}[Data]
+			in Tbl
+		```

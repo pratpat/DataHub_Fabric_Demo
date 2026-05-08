@@ -1,0 +1,52 @@
+table MSFS_Position
+	lineageTag: msfs-position
+	description: "Morgan Stanley Fund Services (admin) positions — PnL, AUM, classification."
+
+	column Date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+	column PortfolioManager dataType: string
+	column PositionGroup    dataType: string
+	column Country          dataType: string
+	column AssetDescription dataType: string
+	column Ticker           dataType: string
+	column BloombergTicker  dataType: string
+	column AssetType        dataType: string
+	column LocalCurrency    dataType: string
+	column Direction        dataType: string
+	column PBSource         dataType: string
+	column CUSIP            dataType: string
+	column ISIN             dataType: string
+	column SEDOL            dataType: string
+	column AssetCategory    dataType: string
+	column AssetSubCategory dataType: string
+
+	column QuantityEOD          dataType: double
+	column MarketPriceBaseEOD   dataType: double
+	column MarketValueLocalEOD  dataType: double
+	column MarketValueBaseEOD   dataType: double
+	column DailyPNL             dataType: double
+	column MTDPNL               dataType: double
+	column YTDPNL               dataType: double
+	column AUM                  dataType: double
+	column UnderlyingPrice      dataType: double
+	column UnitCost             dataType: double
+
+	measure 'MSFS Total MV' = SUM(MSFS_Position[MarketValueBaseEOD])
+		formatString: "#,##0.00"
+	measure 'MSFS Daily PnL' = SUM(MSFS_Position[DailyPNL])
+		formatString: "#,##0.00"
+	measure 'MSFS YTD PnL' = SUM(MSFS_Position[YTDPNL])
+		formatString: "#,##0.00"
+	measure 'MSFS AUM' = SUM(MSFS_Position[AUM])
+		formatString: "#,##0.00"
+
+	partition MSFS_Position = m
+		mode: directLake
+		source = ```
+			let
+			    Source = Lakehouse.Contents([]),
+			    LH = Source{[Name="CapMarket_LH"]}[Data],
+			    Tbl = LH{[Schema="dbo",Item="MSFS_Position"]}[Data]
+			in Tbl
+		```
